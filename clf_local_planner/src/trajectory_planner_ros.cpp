@@ -165,8 +165,8 @@ namespace clf_local_planner {
       private_nh.param("vy_samples", vy_samples, 3);
       private_nh.param("vtheta_samples", vtheta_samples, 20);
 
-      private_nh.param("path_distance_bias", pdist_scale, 0.6);
-      private_nh.param("goal_distance_bias", gdist_scale, 0.8);
+      private_nh.param("pdist_scale", pdist_scale, 0.6);
+      private_nh.param("gdist_scale", gdist_scale, 0.8);
       private_nh.param("occdist_scale", occdist_scale, 0.01);
       private_nh.param("heading_scale", heading_scale, 0.5);
 
