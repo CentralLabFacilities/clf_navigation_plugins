@@ -114,7 +114,6 @@ namespace clf_local_planner {
       return line_cost;
 
     //if all line costs are legal... then we can return that the footprint is legal
-    ROS_ERROR_STREAM("Footprint total cost: " << footprint_cost << "; avg: " << footprint_cost/footprint.size());
     return footprint_cost/footprint.size();
 
   }
