@@ -231,11 +231,11 @@ namespace clf_local_planner{
       double impossible_cost,
       Trajectory& traj) {
 
-    ROS_DEBUG_NAMED("trajectory_planner_ros", "Generating traj for: x: %.2f, y: %.2f, theta: %.2f \n"
-                                              "vx: %.2f, vy: %.2f, vtheta: %.2f \n"
-                                              "vx_samp: %.2f, vy_samp: %.2f, vtheta_samp: %.2f \n"
-                                              "x_acc: %.2f, y_acc: %.2f, theta_acc: %.2f \n"
-                                              "impossible cost: %.2f",x,y,theta,vx,vy,vtheta,vx_samp,vy_samp,vtheta_samp,acc_x,acc_y,acc_theta,impossible_cost);
+    // ROS_DEBUG_NAMED("trajectory_planner_ros", "Generating traj for: x: %.2f, y: %.2f, theta: %.2f \n"
+    //                                           "vx: %.2f, vy: %.2f, vtheta: %.2f \n"
+    //                                           "vx_samp: %.2f, vy_samp: %.2f, vtheta_samp: %.2f \n"
+    //                                           "x_acc: %.2f, y_acc: %.2f, theta_acc: %.2f \n"
+    //                                           "impossible cost: %.2f",x,y,theta,vx,vy,vtheta,vx_samp,vy_samp,vtheta_samp,acc_x,acc_y,acc_theta,impossible_cost);
 
     // make sure the configuration doesn't change mid run
     boost::mutex::scoped_lock l(configuration_mutex_);
@@ -286,7 +286,7 @@ namespace clf_local_planner{
     unsigned int cur_x, cur_y;
     costmap_.worldToMap(x, y, cur_x, cur_y);
     double robot_dist_to_goal = goal_map_(cur_x, cur_y).target_dist;
-    ROS_DEBUG_NAMED("trajectory_planner_ros","current robot dist to goal: %.2f", robot_dist_to_goal);
+    //ROS_DEBUG_NAMED("trajectory_planner_ros","current robot dist to goal: %.2f", robot_dist_to_goal);
 
     for(int i = 0; i < num_steps; ++i){
       //get map coordinates of a point
@@ -387,11 +387,13 @@ namespace clf_local_planner{
       time += dt;
     } // end for i < numsteps
 
-    ROS_DEBUG_NAMED("trajectory_planner_ros", "OccCost: %f, path_dist: %.2f, goal_dist: %.2f, heading_diff: %.2f", occ_cost, path_dist, goal_dist, heading_diff);
+    ROS_DEBUG_NAMED("trajectory_planner_ros","vx_samp: %.2f, vtheta_samp: %.2f", vx_samp, vtheta_samp); 
     double cost = pdist_scale_ * path_dist + goal_dist * gdist_scale_ + occdist_scale_ * occ_cost;
+    ROS_DEBUG_NAMED("trajectory_planner_ros","pdist_scale_: %.2f, gdist_scale_: %.2f, occdist_scale_: %.2f", pdist_scale_, gdist_scale_, occdist_scale_);
     if (heading_scoring_) {
       cost += heading_scale_ * heading_diff;
     }
+    ROS_DEBUG_NAMED("trajectory_planner_ros", "OccCost: %f, path_dist: %.2f, goal_dist: %.2f, heading_diff: %.2f, COSTS!!!: %.2f", occ_cost, path_dist, goal_dist, heading_diff, cost);
     traj.cost_ = cost;
   }
 
