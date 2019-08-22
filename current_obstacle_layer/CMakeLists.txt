@@ -66,3 +66,6 @@ target_link_libraries(current_obstacle_layer
   ${catkin_LIBRARIES}
 )
 
+install(FILES col_plugin.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
