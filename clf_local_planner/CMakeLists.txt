@@ -134,11 +134,6 @@ install(FILES blp_plugin.xml
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  PATTERN ".svn" EXCLUDE
-)
-
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest)
   catkin_add_gtest(clf_local_planner_utest
