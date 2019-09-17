@@ -58,7 +58,7 @@ PLUGINLIB_EXPORT_CLASS(clf_local_planner::TrajectoryPlannerROS, nav_core::BaseLo
 
 namespace clf_local_planner {
 
-  void TrajectoryPlannerROS::reconfigureCB(BaseLocalPlannerConfig &config, uint32_t level) {
+  void TrajectoryPlannerROS::reconfigureCB(ClfLocalPlannerConfig &config, uint32_t level) {
       if (setup_ && config.restore_defaults) {
         config = default_config_;
         //Avoid looping
@@ -246,8 +246,8 @@ namespace clf_local_planner {
       map_viz_.initialize(name, global_frame_, boost::bind(&TrajectoryPlanner::getCellCosts, tc_, _1, _2, _3, _4, _5, _6));
       initialized_ = true;
 
-      dsrv_ = new dynamic_reconfigure::Server<BaseLocalPlannerConfig>(private_nh);
-      dynamic_reconfigure::Server<BaseLocalPlannerConfig>::CallbackType cb = boost::bind(&TrajectoryPlannerROS::reconfigureCB, this, _1, _2);
+      dsrv_ = new dynamic_reconfigure::Server<ClfLocalPlannerConfig>(private_nh);
+      dynamic_reconfigure::Server<ClfLocalPlannerConfig>::CallbackType cb = boost::bind(&TrajectoryPlannerROS::reconfigureCB, this, _1, _2);
       dsrv_->setCallback(cb);
 
     } else {

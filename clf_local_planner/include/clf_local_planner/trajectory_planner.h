@@ -48,7 +48,7 @@
 #include <clf_local_planner/world_model.h>
 #include <clf_local_planner/trajectory.h>
 #include <clf_local_planner/Position2DInt.h>
-#include <clf_local_planner/BaseLocalPlannerConfig.h>
+#include <clf_local_planner/ClfLocalPlannerConfig.h>
 
 //we'll take in a path as a vector of poses
 #include <geometry_msgs/PoseStamped.h>
@@ -135,7 +135,7 @@ namespace clf_local_planner {
       /**
        * @brief Reconfigures the trajectory planner
        */
-      void reconfigure(BaseLocalPlannerConfig &cfg);
+      void reconfigure(ClfLocalPlannerConfig &cfg);
 
       /**
        * @brief  Given the current position, orientation, and velocity of the robot, return a trajectory to follow

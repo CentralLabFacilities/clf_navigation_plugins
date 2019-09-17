@@ -58,9 +58,9 @@ using namespace costmap_2d;
 
 namespace clf_local_planner{
 
-  void TrajectoryPlanner::reconfigure(BaseLocalPlannerConfig &cfg)
+  void TrajectoryPlanner::reconfigure(ClfLocalPlannerConfig &cfg)
   {
-      BaseLocalPlannerConfig config(cfg);
+      ClfLocalPlannerConfig config(cfg);
 
       boost::mutex::scoped_lock l(configuration_mutex_);
 
@@ -602,12 +602,15 @@ namespace clf_local_planner{
     }
 
     //we want to sample the velocity space regularly
-    double dvx = (max_vel_x - min_vel_x) / (vx_samples_ - 1);
     double dvy = (max_vel_y - min_vel_y) / (vy_samples_ - 1);
     ROS_DEBUG_NAMED("trajectory_planner_ros","dvy: %.2f max_vel_y: %.2f min_vel_y: %.2f", dvy, max_vel_y, min_vel_y);
     double dvtheta = (max_vel_theta - min_vel_theta) / (vtheta_samples_ - 1);
 
-    double vx_samp = min_vel_x;
+    std::vector<double> vx_samp;
+    vx_samp.push_back(0.0); // 0 as special value
+    for(int i = 0; i < vx_samples_; ++i) {
+        vx_samp.push_back(min_vel_x + i * (max_vel_x - min_vel_x) / (vx_samples_ - 1));
+    }
     double vtheta_samp = min_vel_theta;
     double vy_samp = min_vel_y;
     if(!holonomic_robot_) {
@@ -629,10 +632,10 @@ namespace clf_local_planner{
     //if we're performing an escape we won't allow moving forward
     if (!escaping_) {
       //loop through all x velocities
-      for(int i = 0; i < vx_samples_; ++i) {
+      for(size_t i = 0; i < vx_samp.size(); ++i) {
         /*vtheta_samp = 0;
         //first sample the straight trajectory
-        generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp, vy_samp, vtheta_samp,
+        generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp,
             acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
         //if the new trajectory is better... let's take it
@@ -651,7 +654,7 @@ namespace clf_local_planner{
           double vy_samp = min_vel_y;
           if(!holonomic_robot_) {
             vy_samp = 0;
-            generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp, vy_samp, vtheta_samp,
+            generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp,
                                    acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
             //if the new trajectory is better... let's take it
@@ -662,7 +665,7 @@ namespace clf_local_planner{
             }
           } else {
             for(int i = 0; i < vy_samples_; ++i) {
-              generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp, vy_samp, vtheta_samp,
+              generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp,
                   acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
               //if the new trajectory is better... let's take it
@@ -676,7 +679,6 @@ namespace clf_local_planner{
           }
           vtheta_samp += dvtheta;
         }
-        vx_samp += dvx;
       }
 
       /*only explore y velocities with holonomic robots
@@ -726,9 +728,8 @@ namespace clf_local_planner{
     ROS_DEBUG_NAMED("trajectory_planner_ros", "Did not find valid trajectory - trying escape.");
     //and finally, if we can't do anything else, we want to generate trajectories that move backwards slowly
     vtheta_samp = 0.0;
-    vx_samp = backup_vel_;
     vy_samp = 0.0;
-    generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp, vy_samp, vtheta_samp,
+    generateTrajectory(x, y, theta, vx, vy, vtheta, backup_vel_, vy_samp, vtheta_samp,
         acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
     //if the new trajectory is better... let's take it

@@ -66,7 +66,7 @@
 #include <nav_core/base_local_planner.h>
 
 #include <dynamic_reconfigure/server.h>
-#include <clf_local_planner/BaseLocalPlannerConfig.h>
+#include <clf_local_planner/ClfLocalPlannerConfig.h>
 
 #include <clf_local_planner/odometry_helper_ros.h>
 
@@ -75,7 +75,7 @@ namespace clf_local_planner {
    * @class TrajectoryPlannerROS
    * @brief A ROS wrapper for the trajectory controller that queries the param server to construct a controller
    */
-  class TrajectoryPlannerROS : public nav_core::BaseLocalPlanner {
+  class TrajectoryPlannerROS : public nav_core::ClfLocalPlanner {
     public:
       /**
        * @brief  Default constructor for the ros wrapper
@@ -164,7 +164,7 @@ namespace clf_local_planner {
       /**
        * @brief Callback to update the local planner's parameters based on dynamic reconfigure
        */
-      void reconfigureCB(BaseLocalPlannerConfig &config, uint32_t level);
+      void reconfigureCB(ClfLocalPlannerConfig &config, uint32_t level);
 
       /**
        * @brief Once a goal position is reached... rotate to the goal orientation
@@ -217,8 +217,8 @@ namespace clf_local_planner {
 
       ros::Publisher g_plan_pub_, l_plan_pub_;
 
-      dynamic_reconfigure::Server<BaseLocalPlannerConfig> *dsrv_;
-      clf_local_planner::BaseLocalPlannerConfig default_config_;
+      dynamic_reconfigure::Server<ClfLocalPlannerConfig> *dsrv_;
+      clf_local_planner::ClfLocalPlannerConfig default_config_;
       bool setup_;
 
 
