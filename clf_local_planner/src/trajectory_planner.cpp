@@ -604,15 +604,23 @@ namespace clf_local_planner{
     //we want to sample the velocity space regularly
     double dvy = (max_vel_y - min_vel_y) / (vy_samples_ - 1);
     ROS_DEBUG_NAMED("trajectory_planner_ros","dvy: %.2f max_vel_y: %.2f min_vel_y: %.2f", dvy, max_vel_y, min_vel_y);
-    double dvtheta = (max_vel_theta - min_vel_theta) / (vtheta_samples_ - 1);
 
+    ROS_DEBUG_NAMED("trajectory_planner_ros", "min_vel_x=%f, max_vel_x=%f, vx_samples=%u", min_vel_x, max_vel_x, vx_samples_);
     std::vector<double> vx_samp;
     vx_samp.push_back(0.0); // 0 as special value
+    ROS_DEBUG_STREAM("Added entry to list of vx samples: 0.0");
     for(int i = 0; i < vx_samples_; ++i) {
         vx_samp.push_back(min_vel_x + i * (max_vel_x - min_vel_x) / (vx_samples_ - 1));
         ROS_DEBUG_STREAM("Added entry to list of vx samples: " << vx_samp.back());
     }
-    double vtheta_samp = min_vel_theta;
+    ROS_DEBUG_NAMED("trajectory_planner_ros", "min_vel_theta=%f, max_vel_theta=%f, vtheta_samples=%u", min_vel_theta, max_vel_theta, vtheta_samples_);
+    std::vector<double> vtheta_samp;
+    vtheta_samp.push_back(0.0); // 0 as special value
+    ROS_DEBUG_STREAM("Added entry to list of vtheta samples: 0.0");
+    for(int i = 0; i < vtheta_samples_; ++i) {
+        vtheta_samp.push_back(min_vel_theta + i * (max_vel_theta - min_vel_theta) / (vtheta_samples_ - 1));
+        ROS_DEBUG_STREAM("Added entry to list of vtheta samples: " << vtheta_samp.back());
+    }
     double vy_samp = min_vel_y;
     if(!holonomic_robot_) {
       vy_samp = 0;
@@ -649,13 +657,12 @@ namespace clf_local_planner{
         vtheta_samp = min_vel_theta;
         Why is this necessary. We will iterate over all possibilites anyway... Maybe to guarantee x,y = 0 gets tested? But that is done below.
         */
-        double vtheta_samp = min_vel_theta;
         //next sample all theta trajectories
-        for(int j = 0; j < vtheta_samples_ - 1; ++j){
+        for(size_t j = 0; j < vtheta_samp.size(); ++j){
           double vy_samp = min_vel_y;
           if(!holonomic_robot_) {
             vy_samp = 0;
-            generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp,
+            generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp[j],
                                    acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
             //if the new trajectory is better... let's take it
@@ -666,7 +673,7 @@ namespace clf_local_planner{
             }
           } else {
             for(int i = 0; i < vy_samples_; ++i) {
-              generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp,
+              generateTrajectory(x, y, theta, vx, vy, vtheta, vx_samp[i], vy_samp, vtheta_samp[j],
                   acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
               //if the new trajectory is better... let's take it
@@ -678,7 +685,6 @@ namespace clf_local_planner{
               vy_samp += dvy;
             }
           }
-          vtheta_samp += dvtheta;
         }
       }
 
@@ -728,9 +734,8 @@ namespace clf_local_planner{
 
     ROS_DEBUG_NAMED("trajectory_planner_ros", "Did not find valid trajectory - trying escape.");
     //and finally, if we can't do anything else, we want to generate trajectories that move backwards slowly
-    vtheta_samp = 0.0;
     vy_samp = 0.0;
-    generateTrajectory(x, y, theta, vx, vy, vtheta, backup_vel_, vy_samp, vtheta_samp,
+    generateTrajectory(x, y, theta, vx, vy, vtheta, backup_vel_, vy_samp, 0.0,
         acc_x, acc_y, acc_theta, impossible_cost, *comp_traj);
 
     //if the new trajectory is better... let's take it
