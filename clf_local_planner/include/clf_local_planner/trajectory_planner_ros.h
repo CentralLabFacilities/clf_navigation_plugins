@@ -75,7 +75,7 @@ namespace clf_local_planner {
    * @class TrajectoryPlannerROS
    * @brief A ROS wrapper for the trajectory controller that queries the param server to construct a controller
    */
-  class TrajectoryPlannerROS : public nav_core::ClfLocalPlanner {
+  class TrajectoryPlannerROS : public nav_core::BaseLocalPlanner {
     public:
       /**
        * @brief  Default constructor for the ros wrapper
