@@ -610,6 +610,7 @@ namespace clf_local_planner{
     vx_samp.push_back(0.0); // 0 as special value
     for(int i = 0; i < vx_samples_; ++i) {
         vx_samp.push_back(min_vel_x + i * (max_vel_x - min_vel_x) / (vx_samples_ - 1));
+        ROS_DEBUG_STREAM("Added entry to list of vx samples: " << vx_samp.back());
     }
     double vtheta_samp = min_vel_theta;
     double vy_samp = min_vel_y;
