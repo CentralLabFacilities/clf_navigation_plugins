@@ -279,6 +279,7 @@ namespace clf_local_planner{
     //initialize the costs for the trajectory
     double path_dist = 0.0;
     double goal_dist = 0.0;
+    double goal_angular_dist = 0.0;
     double occ_cost = 0.0;
     double heading_diff = 0.0;
 
@@ -358,6 +359,7 @@ namespace clf_local_planner{
           //update path and goal distances
           path_dist = path_map_(cell_x, cell_y).target_dist;
           goal_dist = goal_map_(cell_x, cell_y).target_dist;
+          goal_angular_dist = headingDiff(cell_x, cell_y, x_i, y_i, theta_i);
 
           //if a point on this trajectory has no clear path to goal it is invalid
           if(impossible_cost <= goal_dist || impossible_cost <= path_dist){
@@ -388,12 +390,12 @@ namespace clf_local_planner{
     } // end for i < numsteps
 
     ROS_DEBUG_NAMED("trajectory_planner_ros","vx_samp: %.2f, vtheta_samp: %.2f", vx_samp, vtheta_samp); 
-    double cost = pdist_scale_ * path_dist + goal_dist * gdist_scale_ + occdist_scale_ * occ_cost;
-    ROS_DEBUG_NAMED("trajectory_planner_ros","pdist_scale_: %.2f, gdist_scale_: %.2f, occdist_scale_: %.2f", pdist_scale_, gdist_scale_, occdist_scale_);
+    double cost = pdist_scale_ * path_dist + goal_dist * gdist_scale_ + goal_angular_dist * 0.001 + occdist_scale_ * occ_cost; // TODO make reconfigurable
+    //ROS_DEBUG_NAMED("trajectory_planner_ros","pdist_scale_: %.2f, gdist_scale_: %.2f, occdist_scale_: %.2f", pdist_scale_, gdist_scale_, occdist_scale_);
     if (heading_scoring_) {
       cost += heading_scale_ * heading_diff;
     }
-    ROS_DEBUG_NAMED("trajectory_planner_ros", "OccCost: %f, path_dist: %.2f, goal_dist: %.2f, heading_diff: %.2f, COSTS!!!: %.2f", occ_cost, path_dist, goal_dist, heading_diff, cost);
+    ROS_DEBUG_NAMED("trajectory_planner_ros", "OccCost: %f, path_dist: %.2f, goal_dist: %.2f, goal_angular_dist: %0.2f, heading_diff: %.2f, COSTS!!!: %.2f", occ_cost, path_dist, goal_dist, goal_angular_dist, heading_diff, cost);
     traj.cost_ = cost;
   }
 
