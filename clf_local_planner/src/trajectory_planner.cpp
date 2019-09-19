@@ -359,7 +359,7 @@ namespace clf_local_planner{
           //update path and goal distances
           path_dist = path_map_(cell_x, cell_y).target_dist;
           goal_dist = goal_map_(cell_x, cell_y).target_dist;
-          goal_angular_dist = headingDiff(cell_x, cell_y, x_i, y_i, theta_i);
+          goal_angular_dist = fabs(angles::shortest_angular_distance(theta_i, goal_th_));
 
           //if a point on this trajectory has no clear path to goal it is invalid
           if(impossible_cost <= goal_dist || impossible_cost <= path_dist){
