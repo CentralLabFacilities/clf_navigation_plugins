@@ -11,7 +11,6 @@ find_package(catkin REQUIRED
             laser_geometry
             map_msgs
             message_filters
-            message_generation
             nav_msgs
             pluginlib
             roscpp
