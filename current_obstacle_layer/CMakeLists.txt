@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(current_obstacle_layer)
 
-set (CMAKE_CXX_STANDARD 11)
-
 find_package(catkin REQUIRED
         COMPONENTS
             cmake_modules
